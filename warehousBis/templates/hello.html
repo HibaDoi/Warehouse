@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warehouse Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      
+      .dashboard {
+        background-color: #333;
+        color: white;
+        padding: 20px;
+        height: calc(100% - 40px);
+      }
+      
+       .fire-detection, .shelf-status {
+        margin-bottom: 20px;
+      }
+      
+      .temperature-graph, .humidity-graph {
+        width: 50%; /* Adjust the width as needed */
+        margin: 0 auto; /* Center the graph */
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .temperature-graph canvas, .humidity-graph canvas {
+        width: 100%;
+        height: 150px; /* Adjust the height as needed */
+    }
+      
+      .fire-detection, .shelf-status {
+        background-color: #222;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      
+      .warehouse-map {
+        background-color: #222;
+        padding: 10px;
+        border-radius: 5px;
+        min-height: 200px; /* Adjust as needed */
+      }
+      
+      /* Additional styling can go here */
+       
+</style>
+</head>
+<body>
+<div class="dashboard">
+  <div class="temperature-graph">
+    <canvas id="temperatureGraph"></canvas>
+  </div>
+  <div class="humidity-graph">
+    <canvas id="humidityGraph"></canvas>
+  </div>
+  <div class="fire-detection">
+    <p>Fire Detection State: <span id="fireState">No fire detected</span></p>
+  </div>
+  <div class="shelf-status">
+    <p>Number of Empty Shelves: <span id="emptyShelves">0</span></p>
+  </div>
+  <div class="warehouse-map">
+    <!-- Placeholder for warehouse map -->
+    <p>Warehouse map will be added here.</p>
+  </div>
+</div>
+<script src="script.js"></script>
+<script>
+    let temperatureChart; // Declare this outside to make it accessible globally
+    
+    function fetchDataAndUpdateChart() {
+      fetch('/warehouse/get_temperature_data/') // Use the correct path to your Django view
+        .then(response => response.json())
+        .then(data => {
+          if (temperatureChart) {
+            // Update the chart if it already exists
+            temperatureChart.data.labels = data.labels;
+            temperatureChart.data.datasets[0].data = data.datasets[0].data;
+            temperatureChart.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature = document.getElementById('temperatureGraph').getContext('2d');
+            temperatureChart = new Chart(ctxTemperature, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+        })
+        .catch(error => console.error('Error fetching temperature data:', error));
+    }
+    
+    // Set the function to run every 2 seconds (2000 milliseconds)
+    const INTERVAL = 2000; // Change this value to your preferred interval
+    setInterval(fetchDataAndUpdateChart, INTERVAL);
+    
+    // Fetch data and create the chart when the page loads for the first time
+    window.onload = fetchDataAndUpdateChart;
+    </script>
+    
+</body>
+</html>
