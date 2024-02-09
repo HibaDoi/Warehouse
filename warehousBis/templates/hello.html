@@ -1,18 +1,22 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Warehouse Dashboard</title>
-<link rel="stylesheet" href="styles.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <style>
     body, html {
         height: 100%;
         margin: 0;
         font-family: Arial, sans-serif;
       }
-      
+      #map { /* specify a size for the map container */
+        height: 1000px;
+        width: 100%;
+      }
+
       .dashboard {
         background-color: #333;
         color: white;
@@ -48,19 +52,26 @@
         border-radius: 5px;
         min-height: 200px; /* Adjust as needed */
       }
+      .graph-container {
+        display: flex; /* or inline-block */
+    }
+    
       
       /* Additional styling can go here */
        
 </style>
 </head>
 <body>
+  
 <div class="dashboard">
+  <div class="graph-container">
   <div class="temperature-graph">
     <canvas id="temperatureGraph"></canvas>
   </div>
   <div class="humidity-graph">
     <canvas id="humidityGraph"></canvas>
   </div>
+</div>
   <div class="fire-detection">
     <p>Fire Detection State: <span id="fireState">No fire detected</span></p>
   </div>
@@ -72,10 +83,67 @@
     <p>Warehouse map will be added here.</p>
   </div>
 </div>
-<script src="script.js"></script>
+
+<div id="map">
+  <script>
+
+    // Initialize the map
+    var mymap = L.map('map').setView([-3, -14], 5);
+
+    // Add a tile layer to the map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mymap);
+
+    function display_merchandise() {
+      fetch('/warehouse/get_shelf_data/') 
+      // Use the correct path to your Django view
+
+      
+      //fetch('E:\Desktop\shelves.geojson') 
+          .then(response => response.json())
+          .then(data => {
+          console.log(typeof data)
+          var jsonObject = JSON.parse(data);
+           L.geoJson(jsonObject
+        , {
+          style: function (feature) {
+              return {
+                  fillColor: feature.properties.color,
+                  color: 'black',
+                  weight: 0.8,
+                  fillOpacity: 0.2
+              }
+              ;
+          }
+      }
+      ).addTo(mymap);
+              //////////
+
+
+
+        L
+              
+          });
+    }
+
+   
+ // Set the function to run every 2 seconds (2000 milliseconds)
+     // Change this value to your preferred interval
+    setInterval(display_merchandise, 1000);
+
+    display_merchandise();
+
+  </script>
+</div>
+
+
+
+
+
 <script>
     let temperatureChart; // Declare this outside to make it accessible globally
-    
+    let humidityChart;
     function fetchDataAndUpdateChart() {
       fetch('/warehouse/get_temperature_data/') // Use the correct path to your Django view
         .then(response => response.json())
@@ -96,6 +164,27 @@
           }
         })
         .catch(error => console.error('Error fetching temperature data:', error));
+
+        /////////////////////////////////////////////////////
+        fetch('/warehouse/get_humidity_data/') // Use the correct path to your Django view
+        .then(response => response.json())
+        .then(data => {
+          if (humidityChart) {
+            // Update the chart if it already exists
+            humidityChart.data.labels = data.labels;
+            humidityChart.data.datasets[0].data = data.datasets[0].data;
+            humidityChart.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature = document.getElementById('humidityGraph').getContext('2d');
+            humidityChart = new Chart(ctxTemperature, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+        })
+        .catch(error => console.error('Error fetching temperature data:', error));
     }
     
     // Set the function to run every 2 seconds (2000 milliseconds)
@@ -105,6 +194,73 @@
     // Fetch data and create the chart when the page loads for the first time
     window.onload = fetchDataAndUpdateChart;
     </script>
-    
+   
+    <!-- <script>
+        let temperatureChart, humidityChart;
+        
+        function fetchTemperatureData() {
+          return fetch('/warehouse/get_temperature_data/')
+            .then(response => response.json());
+        }
+        
+        function fetchHumidityData() {
+          return fetch('/warehouse/get_humidity_data/')
+            .then(response => response.json());
+        }
+        
+        function fetchDataAndUpdateChart() {
+          Promise.all([fetchTemperatureData(), fetchHumidityData()])
+            .then(([temperatureData, humidityData]) => {
+              // Handle temperature chart
+              if (temperatureChart) {
+                temperatureChart.data.labels = temperatureData.labels;
+                temperatureChart.data.datasets[0].data = temperatureData.data;
+                temperatureChart.update();
+              } else {
+                var ctxTemperature = document.getElementById('temperatureGraph').getContext('2d');
+                temperatureChart = new Chart(ctxTemperature, {
+                  type: 'line',
+                  data: {
+                    labels: temperatureData.labels,
+                    datasets: [{
+                      label: 'Temperature',
+                      data: temperatureData.data,
+                      // Styling options here
+                    }]
+                  },
+                  options: {}
+                });
+              }
+        
+              // Handle humidity chart
+              if (humidityChart) {
+                humidityChart.data.labels = humidityData.labels;
+                humidityChart.data.datasets[0].data = humidityData.data;
+                humidityChart.update();
+              } else {
+                var ctxHumidity = document.getElementById('humidityGraph').getContext('2d');
+                humidityChart = new Chart(ctxHumidity, {
+                  type: 'line',
+                  data: {
+                    labels: humidityData.labels,
+                    datasets: [{
+                      label: 'Humidity',
+                      data: humidityData.data,
+                      // Styling options here
+                    }]
+                  },
+                  options: {}
+                });
+              }
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+        
+        const INTERVAL = 2000; // Interval for data refresh
+        setInterval(fetchDataAndUpdateChart, INTERVAL);
+        
+        window.onload = fetchDataAndUpdateChart;
+        </script>
+         -->
 </body>
 </html>

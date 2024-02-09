@@ -4,15 +4,16 @@ from django.http import JsonResponse
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import json
+import geopandas as gpd
+from geojson_rewind import rewind
 # cette fonction fait reference a ce qui doit etre afficher au sein d elle ok 
 def say_hello(request): 
 #la nature de reponce envoyer
     return render(request ,'hello.html')
-
-# Django view example to retrieve temperature data from MongoDB Atlas
-
-
-
 def get_temperature_data(request):
     # Replace the following with your MongoDB connection details
     client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
@@ -27,7 +28,7 @@ def get_temperature_data(request):
     temperature_data = collection.find({'Streamname': streamname_id}).sort('_id', 1)
 
     # Transforming the data into the format expected by Chart.js
-    hh = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result']])for data in temperature_data]
+    hh = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in temperature_data]
     transformed_list = [[item[0] for item in hh], [item[1] for item in hh]]
 
 
@@ -44,3 +45,114 @@ def get_temperature_data(request):
     }
     
     return JsonResponse(data)
+def get_humidity_data(request):
+    # Replace the following with your MongoDB connection details
+    client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
+    db = client['dht11']
+    collection = db['obs']
+    
+    # Retrieving the last 6 data points for the example
+     # Replace 'your_streamname_id' with the ObjectId from your image
+    streamname_id = ObjectId('65afec0c3a22637b465ed299')
+
+    # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
+    Humidity_data = collection.find({'Streamname': streamname_id}).sort('_id', 1)
+
+    # Transforming the data into the format expected by Chart.js
+    hh = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data]
+
+    transformed_list = [[item[0] for item in hh], [item[1] for item in hh]]
+
+
+    # temperatures = [data['Result'] for data in temperature_data]
+   
+    data = {
+        # 'labels': ["9AM", "10AM", "11AM", "12PM"],
+       'labels': transformed_list[0],
+        'datasets': [{
+            'label': 'Humidity',
+            'data': transformed_list[1],
+            # You can add more styling options here
+        }]
+    }
+    
+    return JsonResponse(data)
+def get_fire_data(request):
+
+    # Replace the following with your MongoDB connection details
+    client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
+    db = client['dht11']
+    collection = db['obs']
+    
+    # Retrieving the last 6 data points for the example
+     # Replace 'your_streamname_id' with the ObjectId from your image
+    streamname_id = ObjectId('65afec3b3a22637b465ed29b')
+
+    # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
+    temperature_data = collection.find({'Streamname': streamname_id}).sort('_id', 1)
+
+    # Transforming the data into the format expected by Chart.js
+    hh = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result']])for data in temperature_data]
+  
+    transformed_list = [[item[0] for item in hh], [item[1] for item in hh]]
+
+
+    # temperatures = [data['Result'] for data in temperature_data]
+   
+    data = {
+        # 'labels': ["9AM", "10AM", "11AM", "12PM"],
+       'labels': transformed_list[0],
+        'datasets': [{
+            'label': 'Temperature',
+            'data': transformed_list[1],
+            # You can add more styling options here
+        }]
+    }
+    
+    return JsonResponse(data)
+def get_shelf_data(request):
+    # Replace the following with your MongoDB connection details
+    client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
+    db = client['dht11']
+    collection = db['obs']
+    collection1 = db['thing_locations']  # Remplacez 'ma_collection' par le nom de votre collection
+    collection2= db['things']
+
+    # Charger les données GeoJSON depuis un fichier
+    gdf= gpd.read_file('E:\Desktop\ShelveFinal.geojson')
+    # geojson_data = json.load(f)
+    streamname_id = ObjectId('65afec1c3a22637b465ed29a')
+    motion_data = collection.find({'Streamname': streamname_id}).sort('_id', -1).limit(1)
+    motion_dd = [data['Result'] for data in motion_data]
+    status=motion_dd[0][0][:39]
+    # gdf['rooms'] = np.repeat(['A', 'B', 'C'], [8, 8, 7])
+    gdf['status'] = status
+    # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
+    marchandise= collection1.find().limit(1)
+    print(marchandise)
+    marchandise = [da['id_thing'] for da in marchandise]
+    room_merch= collection2.find({'_id':ObjectId(marchandise[0])}).sort('_id', -1).limit(1)
+    room_merch = [data['Properties'] for data in room_merch]
+    Room_stt=room_merch[0]['room']
+    def color_polygons(row):
+        if row['status'] == 1 and row['rooms'] == Room_stt :
+            return '#0000FF'
+        elif row['status'] == 1 and row['rooms'] != None:
+            return '#32CD32'
+        elif row['status'] == 0 and row['rooms'] != None:
+            return '#FF0000'
+        elif row['status'] == None:
+            return '#000000'
+        
+
+    gdf['color'] = gdf.apply(color_polygons, axis=1)
+    # ____________________________
+    # Read your data into a GeoDataFrame (replace 'your_file.gdf' with your actual file name)
+    #Convert the GeoDataFrame to GeoJSON
+    geojson_data = gdf.to_json()
+    output = rewind(geojson_data)
+    # Return the GeoJSON response
+    print(type(output))
+    print(output)
+    return JsonResponse(output, safe=False)
+   

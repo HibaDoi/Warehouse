@@ -6,6 +6,12 @@ name = "pypi"
 [packages]
 django = "*"
 pymongo = "*"
+numpy = "*"
+pandas = "*"
+matplotlib = "*"
+folium = "*"
+geopandas = "*"
+geojson-rewind = "*"
 
 [dev-packages]
 
