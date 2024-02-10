@@ -72,6 +72,33 @@
     <canvas id="humidityGraph"></canvas>
   </div>
 </div>
+<!--___________________________________-->
+
+<div class="graph-container">
+  <div class="temperature-graph">
+    <canvas id="temperatureGraph2"></canvas>
+  </div>
+  <div class="humidity-graph">
+    <canvas id="humidityGraph2"></canvas>
+  </div>
+</div>
+<!--___________________________________-->
+<div class="graph-container">
+  <div class="temperature-graph">
+    <canvas id="temperatureGraph3"></canvas>
+  </div>
+  <div class="humidity-graph">
+    <canvas id="humidityGraph3"></canvas>
+  </div>
+</div>
+<!--___________________________________-->
+
+
+
+
+
+
+
   <div class="fire-detection">
     <p>Fire Detection State: <span id="fireState">No fire detected</span></p>
   </div>
@@ -139,7 +166,7 @@
 
   <script>
     // Initialize the map
-    var mymap = L.map('map').setView([34.044414357320676, -6.787781743978746], 25);
+    var mymap = L.map('map').setView([34.044414357320676, -6.787781743978746], 48);
 
     // Add a tile layer to the map
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -207,6 +234,8 @@ fetch('/warehouse/get_infra/')
 
 <script>
     let temperatureChart; // Declare this outside to make it accessible globally
+    let temperatureChart2; 
+    let temperatureChart3; 
     let humidityChart;
     function fetchDataAndUpdateChart() {
       fetch('/warehouse/get_temperature_data/') // Use the correct path to your Django view
@@ -226,7 +255,40 @@ fetch('/warehouse/get_infra/')
               options: {}
             });
           }
-        })
+          if (temperatureChart2) {
+            // Update the chart if it already exists
+            temperatureChart2.data.labels = data.labels;
+            temperatureChart2.data.datasets[0].data = data.datasets[0].data;
+            temperatureChart2.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature2 = document.getElementById('temperatureGraph2').getContext('2d');
+            temperatureChart2 = new Chart(ctxTemperature2, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+          if (temperatureChart3) {
+            // Update the chart if it already exists
+            temperatureChart3.data.labels = data.labels;
+            temperatureChart3.data.datasets[0].data = data.datasets[0].data;
+            temperatureChart3.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature3 = document.getElementById('temperatureGraph3').getContext('2d');
+            temperatureChart3 = new Chart(ctxTemperature3, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+
+
+
+
+        }
+        )
         .catch(error => console.error('Error fetching temperature data:', error));
 
         /////////////////////////////////////////////////////
@@ -250,7 +312,9 @@ fetch('/warehouse/get_infra/')
         })
         .catch(error => console.error('Error fetching temperature data:', error));
     }
-    
+    ///////////////////////////////////////////////////////////
+
+
     // Set the function to run every 2 seconds (2000 milliseconds)
     const INTERVAL = 2000; // Change this value to your preferred interval
     setInterval(fetchDataAndUpdateChart, INTERVAL);
