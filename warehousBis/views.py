@@ -52,15 +52,15 @@ def get_temperature_data(request):
        'labels2': transformed_list2[0],
         'datasets2': [{
             'label2': 'Temperature',
-            'data_2': transformed_list2[1],
+            'data2': transformed_list2[1],
             # You can add more styling options here
-        } ]     ,  
-       'labels_3': transformed_list3[0],
+        } ],  
+       'labels3': transformed_list3[0],
         'datasets3': [{
             'label3': 'Temperature',
             'data3': transformed_list3[1],
             # You can add more styling options here
-        } ]     ,         
+        } ],         
         
     }
     
@@ -74,15 +74,20 @@ def get_humidity_data(request):
     # Retrieving the last 6 data points for the example
      # Replace 'your_streamname_id' with the ObjectId from your image
     streamname_id = ObjectId('65afec0c3a22637b465ed299')
-
+    R1=ObjectId('65afed703a22637b465ed29c')
+    R2=ObjectId('65afed983a22637b465ed29d')
+    R3=ObjectId('65afedb33a22637b465ed29e')
     # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
-    Humidity_data = collection.find({'Streamname': streamname_id}).sort('_id', 1)
-
+    Humidity_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', 1)
+    Humidity_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', 1)
+    Humidity_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', 1)
     # Transforming the data into the format expected by Chart.js
-    hh = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data]
-
+    hh = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data_R1]
+    hh2 = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data_R2]
+    hh3 = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data_R3]
     transformed_list = [[item[0] for item in hh], [item[1] for item in hh]]
-
+    transformed_list2 = [[item[0] for item in hh2], [item[1] for item in hh2]]
+    transformed_list3 = [[item[0] for item in hh3], [item[1] for item in hh3]]
 
     # temperatures = [data['Result'] for data in temperature_data]
    
@@ -93,7 +98,23 @@ def get_humidity_data(request):
             'label': 'Humidity',
             'data': transformed_list[1],
             # You can add more styling options here
-        }]
+        }],
+    
+        # 'labels': ["9AM", "10AM", "11AM", "12PM"],
+       'labels2': transformed_list2[0],
+        'datasets2': [{
+            'label2': 'Humidity',
+            'data2': transformed_list2[1],
+            # You can add more styling options here
+        }],
+    
+        # 'labels': ["9AM", "10AM", "11AM", "12PM"],
+       'labels3': transformed_list3[0],
+        'datasets3': [{
+            'label3': 'Humidity',
+            'data3': transformed_list3[1],
+            # You can add more styling options here
+        }],
     }
     
     return JsonResponse(data)

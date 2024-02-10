@@ -12,10 +12,7 @@
         margin: 0;
         font-family: Arial, sans-serif;
       }
-      #map { /* specify a size for the map container */
-        height: 300px;
-        width: 100%;
-      }
+
 
       .dashboard {
         background-color: #333;
@@ -95,10 +92,6 @@
 
 
 
-
-
-
-
   <div class="fire-detection">
     <p>Fire Detection State: <span id="fireState">No fire detected</span></p>
   </div>
@@ -111,7 +104,7 @@
   </div>
 </div>
 
-<div id="map">
+<div id="map" class="warehouse-map">
   <!-- <script>
 
     // Initialize the map
@@ -237,6 +230,8 @@ fetch('/warehouse/get_infra/')
     let temperatureChart2; 
     let temperatureChart3; 
     let humidityChart;
+    let humidityChart2;
+    let humidityChart3
     function fetchDataAndUpdateChart() {
       fetch('/warehouse/get_temperature_data/') // Use the correct path to your Django view
         .then(response => response.json())
@@ -257,8 +252,8 @@ fetch('/warehouse/get_infra/')
           }
           if (temperatureChart2) {
             // Update the chart if it already exists
-            temperatureChart2.data.labels = data.labels;
-            temperatureChart2.data.datasets[0].data = data.datasets[0].data;
+            temperatureChart2.data.labels = data.labels2;
+            temperatureChart2.data.datasets[0].data = data.datasets2[0].data2;
             temperatureChart2.update();
           } else {
             // Create the chart if it does not exist
@@ -271,8 +266,8 @@ fetch('/warehouse/get_infra/')
           }
           if (temperatureChart3) {
             // Update the chart if it already exists
-            temperatureChart3.data.labels = data.labels;
-            temperatureChart3.data.datasets[0].data = data.datasets[0].data;
+            temperatureChart3.data.labels = data.labels3;
+            temperatureChart3.data.datasets[0].data = data.datasets3[0].data3;
             temperatureChart3.update();
           } else {
             // Create the chart if it does not exist
@@ -283,9 +278,11 @@ fetch('/warehouse/get_infra/')
               options: {}
             });
           }
-
-
-
+          function showChart(chart) {
+            if (chart) {
+                chart.canvas.parentNode.style.display = 'block'; // Affiche le conteneur du graphique
+            }
+        }
 
         }
         )
@@ -309,6 +306,44 @@ fetch('/warehouse/get_infra/')
               options: {}
             });
           }
+          if (humidityChart2) {
+            // Update the chart if it already exists
+            humidityChart2.data.labels = data.labels3;
+            humidityChart2.data.datasets[0].data = data.datasets3[0].data3;
+            humidityChart2.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature2 = document.getElementById('humidityGraph2').getContext('2d');
+            humidityChart2 = new Chart(ctxTemperature2, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+          if (humidityChart3) {
+            // Update the chart if it already exists
+            humidityChart3.data.labels = data.labels3;
+            humidityChart3.data.datasets[0].data = data.datasets3[0].data3;
+            humidityChart3.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature3 = document.getElementById('humidityGraph3').getContext('2d');
+            humidityChart3 = new Chart(ctxTemperature3, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+        
+        function showChart(chart) {
+          if (chart) {
+              chart.canvas.parentNode.style.display = 'block'; // Affiche le conteneur du graphique
+          }
+      }
+
+
+
+
         })
         .catch(error => console.error('Error fetching temperature data:', error));
     }
