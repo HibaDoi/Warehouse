@@ -13,7 +13,7 @@
         font-family: Arial, sans-serif;
       }
       #map { /* specify a size for the map container */
-        height: 1000px;
+        height: 300px;
         width: 100%;
       }
 
@@ -85,27 +85,28 @@
 </div>
 
 <div id="map">
-  <script>
+  <!-- <script>
 
     // Initialize the map
-    var mymap = L.map('map').setView([-3, -14], 5);
+    var mymap = L.map('map').setView([34.044414357320676, -6.787781743978746], 25);
 
     // Add a tile layer to the map
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(mymap);
-
+    
     function display_merchandise() {
+      
       fetch('/warehouse/get_shelf_data/') 
       // Use the correct path to your Django view
-
+     
       
       //fetch('E:\Desktop\shelves.geojson') 
           .then(response => response.json())
           .then(data => {
-          console.log(typeof data)
           var jsonObject = JSON.parse(data);
-           L.geoJson(jsonObject
+      
+          L.geoJson(jsonObject
         , {
           style: function (feature) {
               return {
@@ -122,7 +123,7 @@
 
 
 
-        L
+        
               
           });
     }
@@ -134,7 +135,70 @@
 
     display_merchandise();
 
-  </script>
+  </script> -->
+
+  <script>
+    // Initialize the map
+    var mymap = L.map('map').setView([34.044414357320676, -6.787781743978746], 25);
+
+    // Add a tile layer to the map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mymap);
+///////////////
+fetch('/warehouse/get_infra/')
+.then(response => response.json())
+.then(data => {
+  var jsonObject = JSON.parse(data);
+   L.geoJson(jsonObject, {
+        style: function (feature) {
+            return {
+                fillColor: feature.properties.color,
+                color: 'black',
+                weight: 0.8,
+                fillOpacity: 0
+            };
+        }
+    }).addTo(mymap);
+    setTimeout(display_merchandise, 1000);
+    
+});
+
+/////////////
+    var merchandiseLayer = null;
+
+    function display_merchandise() {
+        // Clear existing merchandise layer if it exists
+        
+
+        fetch('/warehouse/get_shelf_data/')
+            .then(response => response.json())
+            .then(data => {
+                var jsonObject = JSON.parse(data);
+              if (merchandiseLayer !== null) {
+                  mymap.removeLayer(merchandiseLayer);
+              }
+                merchandiseLayer = L.geoJson(jsonObject, {
+                    style: function (feature) {
+                        return {
+                            fillColor: feature.properties.color,
+                            color: 'black',
+                            weight: 0.8,
+                            fillOpacity: 0.8
+                        };
+                    }
+                }).addTo(mymap);
+                setTimeout(display_merchandise, 5000);
+                
+            });
+    }
+
+    // Set the function to run every 2 seconds (2000 milliseconds)
+    display_merchandise();
+    //setInterval(display_merchandise, 1000);
+
+    
+</script>
 </div>
 
 

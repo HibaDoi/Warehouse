@@ -119,12 +119,25 @@ def get_shelf_data(request):
     collection2= db['things']
 
     # Charger les données GeoJSON depuis un fichier
-    gdf= gpd.read_file('E:\Desktop\ShelveFinal.geojson')
+    gdf= gpd.read_file('https://pydeck2.s3.eu-north-1.amazonaws.com/Shelf_uniquement.geojson')
+
+    
     # geojson_data = json.load(f)
     streamname_id = ObjectId('65afec1c3a22637b465ed29a')
-    motion_data = collection.find({'Streamname': streamname_id}).sort('_id', -1).limit(1)
-    motion_dd = [data['Result'] for data in motion_data]
-    status=motion_dd[0][0][:39]
+    R1=ObjectId('65afed703a22637b465ed29c')
+    R2=ObjectId('65afed983a22637b465ed29d')
+    R3=ObjectId('65afedb33a22637b465ed29e')
+    motion_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', -1).limit(1)
+    motion_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', -1).limit(1)
+    motion_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', -1).limit(1)
+    motion_dd1 = [data['Result'] for data in motion_data_R1]
+    motion_dd2 = [data['Result'] for data in motion_data_R2]
+    motion_dd3 = [data['Result'] for data in motion_data_R3]
+    motion_dd1 = motion_dd1[0][0]
+    motion_dd2 = motion_dd2[0][0]
+    motion_dd3 = motion_dd3[0][0]
+    status=motion_dd1+motion_dd2+motion_dd3
+    print(status)
     # gdf['rooms'] = np.repeat(['A', 'B', 'C'], [8, 8, 7])
     gdf['status'] = status
     # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
@@ -155,4 +168,8 @@ def get_shelf_data(request):
     print(type(output))
     print(output)
     return JsonResponse(output, safe=False)
-   
+def get_infra(request):
+    gdf2= gpd.read_file('https://pydeck2.s3.eu-north-1.amazonaws.com/contour_uniquement.geojson')
+    geojson_data = gdf2.to_json()
+    output = rewind(geojson_data)
+    return JsonResponse(output, safe=False)
