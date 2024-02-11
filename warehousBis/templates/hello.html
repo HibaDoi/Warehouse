@@ -12,7 +12,25 @@
         margin: 0;
         font-family: Arial, sans-serif;
       }
-
+      
+        /* Style pour rendre les cartes côte à côte */
+        .map-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .map-container1 {
+            width: 45%;
+            height: 400px;
+            border: 1px solid #ccc;
+        }
+        .map-container2 {
+          width: 45%;
+          height: 400px;
+          border: 1px solid #ccc;
+      }
+   
 
       .dashboard {
         background-color: #333;
@@ -110,74 +128,151 @@
   </div>
 </div>
 
-
-<!-- <div id="map"  class="warehouse-map">
-  <script>
-    // Initialize the map
-    var mymap = L.map('map').setView([34.044414357320676, -6.787781743978746], 48);
-
-    // Add a tile layer to the map
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(mymap);
-///////////////
-    fetch('/warehouse/get_infra/')
-    .then(response => response.json())
-    .then(data => {
-      var jsonObject = JSON.parse(data);
-      L.geoJson(jsonObject, {
-            style: function (feature) {
-                return {
-                    fillColor: feature.properties.color,
-                    color: 'black',
-                    weight: 0.8,
-                    fillOpacity: 0
-                };
-            }
-        }).addTo(mymap);
-        setTimeout(display_merchandise, 1000);
-        
-    });
-
-/////////////
-    var merchandiseLayer = null;
-
-    function display_merchandise() {
-        // Clear existing merchandise layer if it exists
-        
-
-        fetch('/warehouse/get_shelf_data/')
-            .then(response => response.json())
-            .then(data => {
-                var jsonObject = JSON.parse(data);
-              if (merchandiseLayer !== null) {
-                  mymap.removeLayer(merchandiseLayer);
+<div class="map-container">
+  <!-- Première carte -->
+  <div id="map1" class="map-container1">
+    <script>
+      // Initialize the map
+      var mymap = L.map('map1').setView([34.044414357320676, -6.787781743978746], 48);
+  
+      // Add a tile layer to the map
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(mymap);
+  ///////////////
+      fetch('/warehouse/get_infra/')
+      .then(response => response.json())
+      .then(data => {
+        var jsonObject = JSON.parse(data);
+         L.geoJson(jsonObject, {
+              style: function (feature) {
+                  return {
+                      fillColor: feature.properties.color,
+                      color: 'black',
+                      weight: 0.8,
+                      fillOpacity: 0
+                  };
               }
-                merchandiseLayer = L.geoJson(jsonObject, {
-                    style: function (feature) {
-                        return {
-                            fillColor: feature.properties.color,
-                            color: 'black',
-                            weight: 0.8,
-                            fillOpacity: 0.8
-                        };
-                    }
-                }).addTo(mymap);
-                setTimeout(display_merchandise, 5000);
-                
-            });
-    }
+          }).addTo(mymap);
+          setTimeout(display_merchandise, 1000);
+          
+      });
+  
+  /////////////
+      var merchandiseLayer = null;
+  
+      function display_merchandise() {
+          // Clear existing merchandise layer if it exists
+          
+  
+          fetch('/warehouse/get_shelf_data/')
+              .then(response => response.json())
+              .then(data => {
+                  var jsonObject = JSON.parse(data);
+                if (merchandiseLayer !== null) {
+                    mymap.removeLayer(merchandiseLayer);
+                }
+                  merchandiseLayer = L.geoJson(jsonObject, {
+                      style: function (feature) {
+                          return {
+                              fillColor: feature.properties.color,
+                              color: 'black',
+                              weight: 0.8,
+                              fillOpacity: 0.8
+                          };
+                      }
+                  }).addTo(mymap);
+                  setTimeout(display_merchandise, 5000);
+                  
+              });
+      }
+  
+      // Set the function to run every 2 seconds (2000 milliseconds)
+      display_merchandise();
+      //setInterval(display_merchandise, 1000);
+      
+  
+      
+  </script>
+  
+  </div>
+  
+  <!-- Deuxième carte -->
+  <div id="map2" class="map-container2">
 
-    // Set the function to run every 2 seconds (2000 milliseconds)
-    display_merchandise();
-    //setInterval(display_merchandise, 1000);
-    
+  <script>
+// Initialize the map
+//var mymap = L.map('map2').setView([34.044724,-6.787596], 25);
 
-    
+// Add a tile layer to the map
+//L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+//attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+//}).addTo(mymap);
+function routing() {
+var previousMarker = null; // Keep track of the previous marker
+var polylines = []; // Keep track of polylines
+
+fetch('/warehouse/routing/') // Use the correct path to your Django view
+  .then(response => response.json())
+  .then(closest_shortest_path => {
+      // Define custom icon options using a predefined icon
+      var customIcon = L.icon({
+          iconUrl: 'C:/IOT/v.png', // URL to the predefined icon image
+          iconSize: [10, 10], // Size of the icon
+      });
+
+      // Iterate over each point in the shortest path
+      closest_shortest_path.forEach((point, index) => {
+          setTimeout(() => {
+              // Remove the previous marker if it exists
+              if (previousMarker !== null) {
+                  mymap.removeLayer(previousMarker);
+              }
+
+              // Create a marker for each point using the custom icon
+              var marker = L.marker([point[0], point[1]], {icon: customIcon}).addTo(mymap);
+
+              previousMarker = marker; // Update the previous marker
+          }, index * 1000);
+      });
+
+      // Iterate over each segment in the shortest path
+      for (var i = 0; i < closest_shortest_path.length - 1; i++) {
+          var startPoint = closest_shortest_path[i];
+          var endPoint = closest_shortest_path[i + 1];
+
+          // Create a polyline to represent the segment
+          var polyline = L.polyline([
+              [startPoint[0], startPoint[1]],
+              [endPoint[0], endPoint[1]]
+          ]).addTo(mymap);
+          polylines.push(polyline); // Add polyline to the array
+      }
+
+      // Remove the last polyline and marker after routing is completed
+      setTimeout(() => {
+          if (previousMarker !== null) {
+              mymap.removeLayer(previousMarker);
+          }
+          polylines.forEach(polyline => {
+              mymap.removeLayer(polyline);
+          });
+      }, closest_shortest_path.length * 1000);
+  });
+}
+
+// Change this value to your preferred interval
+setInterval(routing, 3000);
+routing();    
 </script>
-</div> -->
 
-<script>
+
+  </div>
+</div>
+
+
+
+  <script>
     let temperatureChart; // Declare this outside to make it accessible globally
     let temperatureChart2; 
     let temperatureChart3; 
@@ -310,104 +405,8 @@
     window.onload = fetchDataAndUpdateChart;
     </script>
    
-   
-    
-<div id="map"  class="warehouse-map2">
-      <script>
-// Initialize the map
-var mymap = L.map('map').setView([34.044724,-6.787596], 25);
-
-// Add a tile layer to the map
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(mymap);
 
 
-
-function display_shelves_centroids() {
-  fetch('/warehouse/display_shelves_centroids/') // Use the correct path to your Django view
-      .then(response => response.json())
-      .then(shelves => {
-          // Iterate over each shelf
-          shelves.forEach(shelf => {
-              var ID = shelf.label;
-              var X = shelf.coordinates.x;
-              var Y = shelf.coordinates.y;
-              // Add a marker to the map
-             //var marker = L.marker([X, Y]).addTo(mymap);
-             //marker.bindPopup('Shelf number: ' + ID).openPopup();
-          });
-      });
-}
-
-display_shelves_centroids();
-
-function routing() {
-  var previousMarker = null; // Keep track of the previous marker
-  var polylines = []; // Keep track of polylines
-
-  fetch('/warehouse/routing/') // Use the correct path to your Django view
-      .then(response => response.json())
-      .then(closest_shortest_path => {
-          // Define custom icon options using a predefined icon
-          var customIcon = L.icon({
-              iconUrl: 'C:/IOT/v.png', // URL to the predefined icon image
-              iconSize: [10, 10], // Size of the icon
-          });
-
-          // Iterate over each point in the shortest path
-          closest_shortest_path.forEach((point, index) => {
-              setTimeout(() => {
-                  // Remove the previous marker if it exists
-                  if (previousMarker !== null) {
-                      mymap.removeLayer(previousMarker);
-                  }
-
-                  // Create a marker for each point using the custom icon
-                  var marker = L.marker([point[0], point[1]], {icon: customIcon}).addTo(mymap);
-
-                  previousMarker = marker; // Update the previous marker
-              }, index * 1000);
-          });
-
-          // Iterate over each segment in the shortest path
-          for (var i = 0; i < closest_shortest_path.length - 1; i++) {
-              var startPoint = closest_shortest_path[i];
-              var endPoint = closest_shortest_path[i + 1];
-
-              // Create a polyline to represent the segment
-              var polyline = L.polyline([
-                  [startPoint[0], startPoint[1]],
-                  [endPoint[0], endPoint[1]]
-              ]).addTo(mymap);
-              polylines.push(polyline); // Add polyline to the array
-          }
-
-          // Remove the last polyline and marker after routing is completed
-          setTimeout(() => {
-              if (previousMarker !== null) {
-                  mymap.removeLayer(previousMarker);
-              }
-              polylines.forEach(polyline => {
-                  mymap.removeLayer(polyline);
-              });
-          }, closest_shortest_path.length * 1000);
-      });
-}
-
- // Change this value to your preferred interval
-setInterval(routing, 5000);
-routing();
-
-
-
-
-
-        
-    
-        
-    </script>
-    </div>
 
 
 

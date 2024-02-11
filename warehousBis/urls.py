@@ -9,8 +9,6 @@ path('get_temperature_data/', views.get_temperature_data),
 path('get_humidity_data/', views.get_humidity_data),
 path('get_shelf_data/', views.get_shelf_data),
 path('get_infra/', views.get_infra),
-path('display_merchandise/', views.display_merchandise),
-path('display_shelves_centroids/', views.display_shelves_centroids),
 path('routing/', views.routing),
 
 ]

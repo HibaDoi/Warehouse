@@ -15,14 +15,7 @@ from shapely.geometry import Point, LineString
 from math import sqrt
 import json
 from django.http import JsonResponse
-
-
-
-
-
-
-
-
+gdf= gpd.read_file('https://pydeck2.s3.eu-north-1.amazonaws.com/CENTROIDS.geojson')
 # cette fonction fait reference a ce qui doit etre afficher au sein d elle ok 
 def say_hello(request): 
 #la nature de reponce envoyer
@@ -228,49 +221,6 @@ def get_infra(request):
     geojson_data = gdf2.to_json()
     output = rewind(geojson_data)
     return JsonResponse(output, safe=False)
-
-
-
-def display_merchandise(request):
-
-
-    client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
-    db = client['dht11']
-    collection = db['locations']
-   
-    streamname_id = ObjectId('65b022c795741b787cf07f91')
-    
-    location_data = collection.find({'_id': streamname_id})
-    if location_data:
-        coordinates = [data['Location']['coordinates'] for data in location_data]
-    loc = {       
-            'x': coordinates[0][1],
-            'y': coordinates[0][0],
-    }
-    return JsonResponse(loc)
-gdf= gpd.read_file('https://pydeck2.s3.eu-north-1.amazonaws.com/CENTROIDS.geojson')
-def display_shelves_centroids(request):
-    input_file = 'C:\IOT\sS.geojson'
-
-    # Read the GeoJSON file
-    with open(input_file, 'r') as f:
-        data = json.load(f)
-
-    # Filter points with status = 1 and rooms = given room
-    filtered_features = [feature for feature in data['features'] if feature['properties']['status'] == 1 and feature['properties']['rooms'] == 'B']
-
-    # Extract shelves information from filtered features
-    shelves = []
-    for feature in filtered_features:
-        shelves.append({
-            'label': feature['properties']['id'],
-            'coordinates': {
-                'x': feature['geometry']['coordinates'][1],
-                'y': feature['geometry']['coordinates'][0],
-            }
-        })
-
-    return JsonResponse(shelves, safe=False)
 def routing(request):
     
     client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
@@ -403,4 +353,5 @@ def routing(request):
     # Return both closest_shortest_path and ID as a JSON response
     gdf["status"][ID+1]=0
     print(gdf["status"])
+    
     return JsonResponse(closest_shortest_path,safe=False)
