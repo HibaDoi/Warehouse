@@ -184,12 +184,13 @@ def get_shelf_data(request):
     motion_dd2 = motion_dd2[0][0]
     motion_dd3 = motion_dd3[0][0]
     status=motion_dd1+motion_dd2+motion_dd3
-    print(status)
+    
     # gdf['rooms'] = np.repeat(['A', 'B', 'C'], [8, 8, 7])
     gdf['status'] = gdfyy['status']
+    print("had statut li bghina",gdf['status'].tolist())
     # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
     marchandise= collection1.find().sort('_id', -1).limit(1)
-    print(marchandise)
+    
     marchandise = [da['id_thing'] for da in marchandise]
     room_merch= collection2.find({'_id':ObjectId(marchandise[0])}).sort('_id', -1).limit(1)
     room_merch = [data['Properties'] for data in room_merch]
@@ -200,7 +201,7 @@ def get_shelf_data(request):
             return '#0000FF'
         elif row['status'] == 1 and row['rooms'] != Room_stt:
             return '#32CD32'
-        elif row['status'] == 0 and row['rooms'] != None:
+        elif row['status'] == 0 :
             return '#FF0000'
         elif row['status'] == None:
             return '#000000'
@@ -297,7 +298,7 @@ def routing(request):
     min_distance = float('inf')  # Initialize with a very large value
     closest_shortest_path = None  # Initialize closest_shortest_path outside the loop
     
-    ID=0
+    
     
     # Read the GeoJSON file
     
@@ -321,7 +322,7 @@ def routing(request):
     coordinates_list = [(feature["coordinates"]["x"], feature["coordinates"]["y"]) for feature in shelves]  # Populate coordinates_list here
     
       # Initialize an empty list to store shelf IDs
-
+    ID=999
     for end_point in coordinates_list:
         start_point = obj_location
         # Find the nearest points in the graph to the provided start and end points
@@ -346,16 +347,22 @@ def routing(request):
                                 (feature['geometry']['coordinates'][1], feature['geometry']['coordinates'][0]) == end_point]
                     ID = shelf_id[0]
                       # Append the shelf ID to the ID list
-
+                    print("yes i exist")
             except nx.NetworkXNoPath:
-                print("No path found between the provided start and end points.")
+                print("No")
             
+            
+
             
     # Return both closest_shortest_path and ID as a JSON response
-    
-    gdfyy.at[ID+1, 'status'] = 0
-    print("fffffffffffffffffffffffff",ID+1 )
-    
+    print("le status des shelf ",(gdfyy['status']).tolist().count(0))
+    if ID !=999:
+
+        gdfyy.at[ID-1, 'status'] = 0
+        print("id ocupeeeeeeeeeeeee",ID )
+    else: 
+        print("matbadaaaaaal walo a zaft ")    
+    print("333333333333333333333333333333333333333333333333333333333333333333 ") 
     #print(gdfyy["status"])
     
     return JsonResponse(closest_shortest_path,safe=False)
