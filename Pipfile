@@ -12,6 +12,7 @@ matplotlib = "*"
 folium = "*"
 geopandas = "*"
 geojson-rewind = "*"
+networkx = "*"
 
 [dev-packages]
 
