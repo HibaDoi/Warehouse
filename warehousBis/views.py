@@ -15,11 +15,11 @@ from shapely.geometry import Point, LineString
 from math import sqrt
 import json
 from django.http import JsonResponse
-gdf= gpd.read_file('https://pydeck2.s3.eu-north-1.amazonaws.com/CENTROIDS.geojson')
+gdfyy= gpd.read_file('https://pydeck2.s3.eu-north-1.amazonaws.com/CENTROIDS.geojson')
 # cette fonction fait reference a ce qui doit etre afficher au sein d elle ok 
 def say_hello(request): 
 #la nature de reponce envoyer
-    return render(request ,'hello.html')
+    return render(request ,'gg copy.html')
 def get_temperature_data(request):
     # Replace the following with your MongoDB connection details
     client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
@@ -186,7 +186,7 @@ def get_shelf_data(request):
     status=motion_dd1+motion_dd2+motion_dd3
     print(status)
     # gdf['rooms'] = np.repeat(['A', 'B', 'C'], [8, 8, 7])
-    gdf['status'] = status
+    gdf['status'] = gdfyy['status']
     # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
     marchandise= collection1.find().sort('_id', -1).limit(1)
     print(marchandise)
@@ -194,10 +194,11 @@ def get_shelf_data(request):
     room_merch= collection2.find({'_id':ObjectId(marchandise[0])}).sort('_id', -1).limit(1)
     room_merch = [data['Properties'] for data in room_merch]
     Room_stt=room_merch[0]['room']
+    print('from mhm shelve nnnnnnnnnnnnnnnnnnnnnnn',Room_stt)
     def color_polygons(row):
         if row['status'] == 1 and row['rooms'] == Room_stt :
             return '#0000FF'
-        elif row['status'] == 1 and row['rooms'] != None:
+        elif row['status'] == 1 and row['rooms'] != Room_stt:
             return '#32CD32'
         elif row['status'] == 0 and row['rooms'] != None:
             return '#FF0000'
@@ -212,8 +213,7 @@ def get_shelf_data(request):
     geojson_data = gdf.to_json()
     output = rewind(geojson_data)
     # Return the GeoJSON response
-    print(type(output))
-    print(output)
+
     return JsonResponse(output, safe=False)
 def get_infra(request):
 
@@ -252,7 +252,7 @@ def routing(request):
     obj_thingy=obj_thingy[0]
     obj_thingy=obj_thingy.split(' ')[1]
     print('location',obj_location)
-    print('room',obj_thingy)
+    print('from location jjjjjjjjjjjjjjjjjjj',obj_thingy)
 
     def load_geojson_segments(file_path):
         """Load segments from a GeoJSON file."""
@@ -301,7 +301,7 @@ def routing(request):
     
     # Read the GeoJSON file
     
-    data1 = gdf.to_json()
+    data1 = gdfyy.to_json()
    
     data = json.loads(data1)
     # Filter points with status = 1 and rooms = given room
@@ -349,9 +349,13 @@ def routing(request):
 
             except nx.NetworkXNoPath:
                 print("No path found between the provided start and end points.")
-            print(ID,end_point)
+            
+            
     # Return both closest_shortest_path and ID as a JSON response
-    gdf["status"][ID+1]=0
-    print(gdf["status"])
+    
+    gdfyy.at[ID+1, 'status'] = 0
+    print("fffffffffffffffffffffffff",ID+1 )
+    
+    #print(gdfyy["status"])
     
     return JsonResponse(closest_shortest_path,safe=False)
