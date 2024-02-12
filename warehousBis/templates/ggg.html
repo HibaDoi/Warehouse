@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Temperature and Humidity Dashboard</title>
+    <style>
+        /* Add your CSS styles here */
+        .graph-container {
+            display: none; /* Initially hide all graph containers */
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Room selection dropdown -->
+        <div class="room-selection">
+            <label for="roomSelect">Choose a room:</label>
+            <select id="roomSelect">
+                <option value="room1">Room 1</option>
+                <option value="room2">Room 2</option>
+                <option value="room3">Room 3</option>
+            </select>
+        </div>
+
+        <!-- Graph containers for each room -->
+        <div class="graph-container" id="room1Graphs">
+            <h1>Room 1 Graphs</h1>
+            <!-- Temperature and humidity graphs for Room 1 -->
+            <!-- Add your canvas or graph elements here -->
+        </div>
+        <div class="graph-container" id="room2Graphs">
+            <h1>Room 2 Graphs</h1>
+            <!-- Temperature and humidity graphs for Room 2 -->
+            <!-- Add your canvas or graph elements here -->
+        </div>
+        <div class="graph-container" id="room3Graphs">
+            <h1>Room 3 Graphs</h1>
+            <!-- Temperature and humidity graphs for Room 3 -->
+            <!-- Add your canvas or graph elements here -->
+        </div>
+
+        <!-- Other dashboard elements -->
+    </div>
+
+    <script>
+        document.getElementById('roomSelect').addEventListener('change', function() {
+            var selectedRoom = this.value; // Gets the selected option's value
+
+            // Hide all graph containers initially
+            document.getElementById('room1Graphs').style.display = 'none';
+            document.getElementById('room2Graphs').style.display = 'none';
+            document.getElementById('room3Graphs').style.display = 'none';
+
+            // Show the selected room's graphs
+            if(selectedRoom === 'room1') {
+                document.getElementById('room1Graphs').style.display = 'block';
+            } else if(selectedRoom === 'room2') {
+                document.getElementById('room2Graphs').style.display = 'block';
+            } else if(selectedRoom === 'room3') {
+                document.getElementById('room3Graphs').style.display = 'block';
+            }
+        });
+
+        // Trigger change event on page load to display the first room's graphs
+        window.onload = function() {
+            document.getElementById('roomSelect').dispatchEvent(new Event('change'));
+        };
+    </script>
+</body>
+</html>

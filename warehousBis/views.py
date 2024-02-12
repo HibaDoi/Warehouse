@@ -19,7 +19,7 @@ gdfyy= gpd.read_file('https://pydeck2.s3.eu-north-1.amazonaws.com/CENTROIDS.geoj
 # cette fonction fait reference a ce qui doit etre afficher au sein d elle ok 
 def say_hello(request): 
 #la nature de reponce envoyer
-    return render(request ,'gg copy.html')
+    return render(request ,'me.html')
 def get_temperature_data(request):
     # Replace the following with your MongoDB connection details
     client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
@@ -33,9 +33,9 @@ def get_temperature_data(request):
     R2=ObjectId('65afed983a22637b465ed29d')
     R3=ObjectId('65afedb33a22637b465ed29e')
     # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
-    temperature_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', 1)
-    temperature_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', 1)
-    temperature_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', 1)
+    temperature_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', 1).limit(40)
+    temperature_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', 1).limit(40)
+    temperature_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', 1).limit(40)
 
     # Transforming the data into the format expected by Chart.js
     hh1 = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in temperature_data_R1]
@@ -84,9 +84,9 @@ def get_humidity_data(request):
     R2=ObjectId('65afed983a22637b465ed29d')
     R3=ObjectId('65afedb33a22637b465ed29e')
     # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
-    Humidity_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', 1)
-    Humidity_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', 1)
-    Humidity_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', 1)
+    Humidity_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', 1).limit(40)
+    Humidity_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', 1).limit(40)
+    Humidity_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', 1).limit(40)
     # Transforming the data into the format expected by Chart.js
     hh = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data_R1]
     hh2 = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data_R2]
@@ -345,11 +345,12 @@ def routing(request):
                     # Extract the shelf ID associated with the end point
                     shelf_id = [feature["properties"]["id"] for feature in filtered_features if 
                                 (feature['geometry']['coordinates'][1], feature['geometry']['coordinates'][0]) == end_point]
+                    
                     ID = shelf_id[0]
                       # Append the shelf ID to the ID list
                     print("yes i exist")
             except nx.NetworkXNoPath:
-                print("No")
+                print("No",end_point ,obj_location)
             
             
 
@@ -366,3 +367,17 @@ def routing(request):
     #print(gdfyy["status"])
     
     return JsonResponse(closest_shortest_path,safe=False)
+
+
+
+def empty_shelf(request):
+    x=gdfyy['status'].tolist()[:12].count(1)
+    y=gdfyy['status'].tolist()[12:23].count(1)
+    z=gdfyy['status'].tolist()[23:].count(1)
+    data= {
+        # 'labels': ["9AM", "10AM", "11AM", "12PM"],
+       'r1': x,
+        'r2': y,
+       'r3': z,    
+    }
+    return JsonResponse(data)

@@ -1,0 +1,341 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warehouse Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<style>
+          /* Add your CSS styles here */
+          .graph-container {
+            display: none; /* Initially hide all graph containers */
+        }
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      
+        /* Style pour rendre les cartes côte à côte */
+        .map-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .map-container1 {
+            width: 45%;
+            height: 400px;
+            border: 1px solid #ccc;
+        }
+        .map-container2 {
+          width: 45%;
+          height: 400px;
+          border: 1px solid #ccc;
+      }
+   
+
+      .dashboard {
+        background-color: #333;
+        color: white;
+        padding: 20px;
+        height: calc(100% - 40px);
+      }
+      
+       .fire-detection, .shelf-status {
+        margin-bottom: 20px;
+      }
+      
+      .temperature-graph, .humidity-graph {
+        width: 50%; /* Adjust the width as needed */
+        margin: 0 auto; /* Center the graph */
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .temperature-graph canvas, .humidity-graph canvas {
+        width: 100%;
+        height: 150px; /* Adjust the height as needed */
+    }
+      
+      .fire-detection, .shelf-status {
+        background-color: #222;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      
+      .warehouse-map {
+        background-color: #222;
+        padding: 10px;
+        border-radius: 5px;
+        min-height: 1000px; /* Adjust as needed */
+      }
+      .warehouse-map2 {
+        background-color: #222;
+        padding: 10px;
+        border-radius: 5px;
+        min-height: 500px; /* Adjust as needed */
+      }
+
+    
+      
+      /* Additional styling can go here */
+       
+</style>
+</head>
+<body>
+ 
+  
+  <div class="dashboard">
+    <!-- Room selection dropdown -->
+    <div class="room-selection">
+        <label for="roomSelect">Choose a room:</label>
+        <select id="roomSelect">
+            <option value="room1">Room 1</option>
+            <option value="room2">Room 2</option>
+            <option value="room3">Room 3</option>
+        </select>
+    </div>
+
+    <!-- Graph containers for each room -->
+    <div class="graph-container" id="room1Graphs">
+        <h1>Room 1 Graphs</h1>
+        <div class="temperature-graph">
+          <canvas id="temperatureGraph"></canvas>
+        </div>
+        <div class="humidity-graph">
+          <canvas id="humidityGraph"></canvas>
+        </div>
+        <!-- Temperature and humidity graphs for Room 1 -->
+        <!-- Add your canvas or graph elements here -->
+    </div>
+    <div class="graph-container" id="room2Graphs">
+        <h1>Room 2 Graphs</h1>
+        <div class="temperature-graph">
+          <canvas id="temperatureGraph2"></canvas>
+        </div>
+        <div class="humidity-graph">
+          <canvas id="humidityGraph2"></canvas>
+        </div>
+        <!-- Temperature and humidity graphs for Room 2 -->
+        <!-- Add your canvas or graph elements here -->
+    </div>
+    <div class="graph-container" id="room3Graphs">
+        <h1>Room 3 Graphs</h1>
+        <!-- Temperature and humidity graphs for Room 3 -->
+        <!-- Add your canvas or graph elements here -->
+        <div class="temperature-graph">
+          <canvas id="temperatureGraph3"></canvas>
+        </div>
+        <div class="humidity-graph">
+          <canvas id="humidityGraph3"></canvas>
+        </div>
+    </div>
+
+    <!-- Other dashboard elements -->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+    
+  
+
+
+  <div class="warehouse-map">
+    <!-- Placeholder for warehouse map -->
+    <p>Warehouse map will be added here.</p>
+  </div>
+</div>
+
+
+
+  
+<script>
+  document.getElementById('roomSelect').addEventListener('change', function() {
+      var selectedRoom = this.value; // Gets the selected option's value
+
+      // Hide all graph containers initially
+      document.getElementById('room1Graphs').style.display = 'none';
+      document.getElementById('room2Graphs').style.display = 'none';
+      document.getElementById('room3Graphs').style.display = 'none';
+
+      // Show the selected room's graphs
+      if(selectedRoom === 'room1') {
+          document.getElementById('room1Graphs').style.display = 'block';
+      } else if(selectedRoom === 'room2') {
+          document.getElementById('room2Graphs').style.display = 'block';
+      } else if(selectedRoom === 'room3') {
+          document.getElementById('room3Graphs').style.display = 'block';
+      }
+  });
+
+  // Trigger change event on page load to display the first room's graphs
+  window.onload = function() {
+      document.getElementById('roomSelect').dispatchEvent(new Event('change'));
+  };
+</script>
+  <script>
+    let temperatureChart; // Declare this outside to make it accessible globally
+    let temperatureChart2; 
+    let temperatureChart3; 
+    let humidityChart;
+    let humidityChart2;
+    let humidityChart3
+    function fetchDataAndUpdateChart() {
+      fetch('/warehouse/get_temperature_data/') // Use the correct path to your Django view
+        .then(response => response.json())
+        .then(data => {
+          if (temperatureChart) {
+            // Update the chart if it already exists
+            temperatureChart.data.labels = data.labels;
+            temperatureChart.data.datasets[0].data = data.datasets[0].data;
+            temperatureChart.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature = document.getElementById('temperatureGraph').getContext('2d');
+            temperatureChart = new Chart(ctxTemperature, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+          if (temperatureChart2) {
+            // Update the chart if it already exists
+            temperatureChart2.data.labels = data.labels2;
+            temperatureChart2.data.datasets[0].data = data.datasets2[0].data2;
+            temperatureChart2.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature2 = document.getElementById('temperatureGraph2').getContext('2d');
+            temperatureChart2 = new Chart(ctxTemperature2, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+          if (temperatureChart3) {
+            // Update the chart if it already exists
+            temperatureChart3.data.labels = data.labels3;
+            temperatureChart3.data.datasets[0].data = data.datasets3[0].data3;
+            temperatureChart3.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature3 = document.getElementById('temperatureGraph3').getContext('2d');
+            temperatureChart3 = new Chart(ctxTemperature3, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+          function showChart(chart) {
+            if (chart) {
+                chart.canvas.parentNode.style.display = 'block'; // Affiche le conteneur du graphique
+            }
+        }
+
+        }
+        )
+        .catch(error => console.error('Error fetching temperature data:', error));
+
+        /////////////////////////////////////////////////////
+        fetch('/warehouse/get_humidity_data/') // Use the correct path to your Django view
+        .then(response => response.json())
+        .then(data => {
+          if (humidityChart) {
+            // Update the chart if it already exists
+            humidityChart.data.labels = data.labels;
+            humidityChart.data.datasets[0].data = data.datasets[0].data;
+            humidityChart.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature = document.getElementById('humidityGraph').getContext('2d');
+            humidityChart = new Chart(ctxTemperature, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+          if (humidityChart2) {
+            // Update the chart if it already exists
+            humidityChart2.data.labels = data.labels3;
+            humidityChart2.data.datasets[0].data = data.datasets3[0].data3;
+            humidityChart2.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature2 = document.getElementById('humidityGraph2').getContext('2d');
+            humidityChart2 = new Chart(ctxTemperature2, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+          if (humidityChart3) {
+            // Update the chart if it already exists
+            humidityChart3.data.labels = data.labels3;
+            humidityChart3.data.datasets[0].data = data.datasets3[0].data3;
+            humidityChart3.update();
+          } else {
+            // Create the chart if it does not exist
+            var ctxTemperature3 = document.getElementById('humidityGraph3').getContext('2d');
+            humidityChart3 = new Chart(ctxTemperature3, {
+              type: 'line',
+              data: data,
+              options: {}
+            });
+          }
+        
+        function showChart(chart) {
+          if (chart) {
+              chart.canvas.parentNode.style.display = 'block'; // Affiche le conteneur du graphique
+          }
+      }
+
+
+
+
+        })
+        .catch(error => console.error('Error fetching temperature data:', error));
+    }
+    ///////////////////////////////////////////////////////////
+    
+
+    // Set the function to run every 2 seconds (2000 milliseconds)
+    const INTERVAL = 2000; // Change this value to your preferred interval
+    setInterval(fetchDataAndUpdateChart, INTERVAL);
+    
+    // Fetch data and create the chart when the page loads for the first time
+    window.onload = fetchDataAndUpdateChart;
+    </script>
+   
+
+
+
+
+
+
+
+</body>
+</html>

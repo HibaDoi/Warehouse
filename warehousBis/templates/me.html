@@ -1,0 +1,130 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warehouse Dashboard</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link href="{% static 'style.css' %}" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+<div class="header">
+    <h1>Warehouse Dashboard</h1>  
+      <!-- Dropdown select box -->
+      <div id="rooom1Graphss" style="display: none;"></div>
+      <div id="rooom2Graphss" style="display: none;"></div>
+      <div id="rooom3Graphss" style="display: none;"></div>
+      <div class="radio-box">
+        
+          <input type="radio" id="room1" name="roomSelect" value="room1">
+          <label for="room1">Room 1</label>
+      
+          <input type="radio" id="room2" name="roomSelect" value="room2">
+          <label for="room2">Room 2</label>
+      
+          <input type="radio" id="room3" name="roomSelect" value="room3">
+          <label for="room3">Room 3</label>
+        
+      </div>
+
+      
+</div>
+
+<div class="dashboard-container">
+  <div class="dashboard">
+    <div id="dashboardContent">
+
+      
+      <div class="main-content">
+        
+
+      
+        
+
+       
+
+
+        
+        
+        <!-- Graph containers for each room temperature+humidity-->
+        <div class="graph-container" id="rooom1Graphs" >
+          
+          <div class="temperature-graph" id="temperatureGraphContainer">
+            <h2>Temperature Graph</h2>
+            <canvas id="temperatureGraph"></canvas>
+          </div>
+          <div class="humidity-graph" id="humidityGraphContainer">
+            <h2>Humidity Graph</h2>
+            <canvas id="humidityGraph"></canvas>
+          </div>
+          
+          <!-- Temperature and humidity graphs for Room 1 -->
+
+          <!-- Add your canvas or graph elements here -->
+        </div>
+
+        <div class="graph-container" id="rooom2Graphs" style="display: none;">
+          
+      <div class="temperature-graph" id="temperatureGraphContainer">
+        <h2>Temperature Graph</h2>
+        <canvas id="temperatureGraph2"></canvas>
+      </div>
+          <div class="humidity-graph" id="humidityGraphContainer">
+            <h2>Humidity Graph</h2>
+            <canvas id="humidityGraph2"></canvas>
+          </div>
+          
+            
+            
+            
+            <!-- Temperature and humidity graphs for Room 2 -->
+            <!-- Add your canvas or graph elements here -->
+        </div>
+        <div class="graph-container" id="rooom3Graphs" style="display: none;">
+            <!-- Temperature and humidity graphs for Room 3 -->
+            <!-- Add your canvas or graph elements here -->
+           
+            <div class="temperature-graph" id="temperatureGraphContainer">
+              <h2>Temperature Graph</h2>
+              <canvas id="temperatureGraph3"></canvas>
+            </div>
+            <div class="humidity-graph" id="humidityGraphContainer">
+              <h2>Humidity Graph</h2>
+              <canvas id="humidityGraph3"></canvas>
+            </div>
+            
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <div id="map-container">
+    <div class="map-info">
+      <h2>Map Overview</h2>
+      <p>This map provides an overview of the warehouse shelves state.</p>
+  </div>
+  <div id="map"></div>
+  </div>
+</div>
+
+
+
+
+
+<script src='https://cdn.plot.ly/plotly-2.27.0.min.js'></script>
+<script src="{% static 'room1.js' %}"></script>  
+<script src="{% static 'room.js' %}"></script>  
+<script src="{% static 'shelf_chart.js' %}"></script>  
+<script src="{% static 'temp_humd.js' %}"></script>   
+<script src="{% static 'map.js' %}"></script>  
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>  
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

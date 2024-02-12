@@ -10,7 +10,7 @@ path('get_humidity_data/', views.get_humidity_data),
 path('get_shelf_data/', views.get_shelf_data),
 path('get_infra/', views.get_infra),
 path('routing/', views.routing),
-
+path('empty_shelf/', views.empty_shelf),
 ]
 
 

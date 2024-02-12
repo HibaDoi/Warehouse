@@ -1,0 +1,242 @@
+ body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      #map { /* specify a size for the map container */
+        height: 900px;
+        width: 100%;
+      }
+
+    
+ 
+
+      .dashboard-container {
+        display: flex;
+        height: calc(100% - 50px);
+    }
+    
+    .dashboard {
+        background-color: #15271b;
+        color: white;
+        padding: 20px;
+        height: calc(150% - 40px);
+        width: 40%; /* Adjusted width to 40% of its parent container */
+    }
+    
+    #map-container {
+        width: 60%; /* Adjusted width to 60% of its parent container */
+        position: relative;
+    }
+    
+      
+      .fire-detection, .shelf-status {
+        margin-bottom: 5px;
+      }
+      .fire-detection, .shelf-status {
+        background-color: #006633; /* Pharmacy green */
+        padding: 5px;
+        border-radius: 5px;
+      }
+      .temperature-graph, .humidity-graph {
+        margin-bottom: 10px;
+      }
+      .temperature-graph,.humidity-graph  {
+        width: 100%; /* Adjust the width as needed */
+        margin: 0 auto; /* Center the graph */
+        padding: 5px; /* Reduce padding to make the graphs smaller */
+        box-sizing: border-box;
+    }
+      
+      .temperature-graph canvas, .humidity-graph canvas {
+        width: 400%;
+        height: 300px; /* Reduce the height of the graphs */
+    }
+        
+      .rooom1Graphss ,.rooom1Graphss,.rooom1Graph { 
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    align-items: center; 
+      }
+      .warehouse-map {
+        background-color: #345c42; /* Pharmacy green */
+        padding: 10px;
+        border-radius: 5px;
+        min-height: 300px; 
+        height: 100%; /* Adjust as needed */
+      }
+      .graph-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+      .graph-container .temperature-graph, .graph-container .humidity-graph {
+          background-color: #345c42; /* Pharmacy green */
+          padding: 20px;
+          margin-bottom: 20px;
+          border-radius: 5px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          margin-top: 20px;
+        
+
+      }
+      
+
+
+    .header {
+        background-color: #345c42;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 10px;
+
+    }
+    
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .header h1 {
+      margin: 0;
+      text-align: left; /* Align the text to the left */
+      font-size: 16px; /* Make the font size smaller, adjust this value as needed */
+  }
+  
+      .main-content {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          
+      }
+    
+      .data-section {
+          background-color: #fff;
+          padding: 20px;
+          margin-bottom: 20px;
+          border-radius: 5px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          flex-basis: 48%;
+      }
+
+       h2 {
+        margin: 0;
+        text-align: left; /* Align the text to the left */
+        font-size: 10px; /* Make the font size smaller, adjust this value as needed */
+    }
+      
+
+      .status-section {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 20px;
+      }
+
+      .status-item {
+          background-color: #345c42;
+          padding: 15px;
+          border-radius: 5px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+          flex-basis: 40%;
+      }
+
+      
+      /* Style for the dropdown select box */
+      .graph-select select {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        cursor: pointer;
+        outline: none;
+        margin-top: 15px;
+      }
+
+      /* Style for the dropdown arrow */
+      .graph-select select::-ms-expand {
+        display: none;
+      }
+
+      .graph-select select:hover {
+        border-color: #aaa;
+      }
+
+      .graph-select select:focus {
+        border-color: #345c42;
+        box-shadow: 0 0 8px 0 rgba(0, 128, 0, 0.4);
+        
+      }
+
+      .graph-select select option {
+        padding: 10px;
+        background-color: #fff;
+        margin-top: 15px;
+      }
+
+      .graph-select select option:hover {
+        background-color: #f9f9f9;
+      }
+
+      
+
+      
+      /* Additional styling can go here */
+      /* CSS for positioning the map title and description */
+    .map-info {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 300px; /* Adjust the width as needed */
+      padding: 20px;
+      background-color: #ffffff;
+      border: 1px solid #dddddd;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000; /* Ensure it's above the map */
+    }
+
+    .map-info h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+       
+
+
+
+    .radio-box {
+      padding: 0; /* Removes internal padding */
+      width: fit-content;
+      margin-right: 0; /* Ensures no margin on the right */
+      margin-left: auto; /* Pushes the box to the right */
+      display: flex;
+      justify-content: center;
+  }
+  
+  
+  .graph-radio {
+      display: flex;
+      flex-direction: row; /* Arranges the radios in a horizontal line */
+      gap: 10px; /* Space between each radio button */
+  }
+  
+  .graph-radio input[type="radio"] {
+      accent-color: #007bff; /* Change the color of the radio button */
+      margin-right: 5px; /* Space between radio button and label */
+  }
+  
+  .graph-radio label {
+    color: white;
+    margin: 0;
+    text-align: center; /* Align the text to the left */
+    font-size: 16px; /* Make the font size smaller, adjust this value as needed */
+  }
+  
+  /* Optional: Style the label when hovering */
+  .graph-radio label:hover {
+      color: #007bff;
+  }
+  
