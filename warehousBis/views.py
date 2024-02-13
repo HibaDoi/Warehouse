@@ -33,18 +33,18 @@ def get_temperature_data(request):
     R2=ObjectId('65afed983a22637b465ed29d')
     R3=ObjectId('65afedb33a22637b465ed29e')
     # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
-    temperature_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', 1).limit(40)
-    temperature_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', 1).limit(40)
-    temperature_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', 1).limit(40)
+    temperature_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', -1).limit(40)
+    temperature_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', -1).limit(40)
+    temperature_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', -1).limit(40)
 
     # Transforming the data into the format expected by Chart.js
     hh1 = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in temperature_data_R1]
     hh2 = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in temperature_data_R2]
     hh3 = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in temperature_data_R3]
-    transformed_list1 = [[item[0] for item in hh1], [item[1] for item in hh1]]
-    transformed_list2 = [[item[0] for item in hh2], [item[1] for item in hh2]]
-    transformed_list3 = [[item[0] for item in hh3], [item[1] for item in hh3]]
-
+    transformed_list1 = [[item[0] for item in hh1][::-1], [item[1] for item in hh1][::-1]]
+    transformed_list2 = [[item[0] for item in hh2][::-1], [item[1] for item in hh2][::-1]]
+    transformed_list3 = [[item[0] for item in hh3][::-1], [item[1] for item in hh3][::-1]]
+    print("fffffffffffff",transformed_list1)
     # temperatures = [data['Result'] for data in temperature_data]
    
     data = {
@@ -84,16 +84,16 @@ def get_humidity_data(request):
     R2=ObjectId('65afed983a22637b465ed29d')
     R3=ObjectId('65afedb33a22637b465ed29e')
     # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
-    Humidity_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', 1).limit(40)
-    Humidity_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', 1).limit(40)
-    Humidity_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', 1).limit(40)
+    Humidity_data_R1 = collection.find({'Streamname': streamname_id,'RoomID':R1}).sort('_id', -1).limit(40)
+    Humidity_data_R2 = collection.find({'Streamname': streamname_id,'RoomID':R2}).sort('_id', -1).limit(40)
+    Humidity_data_R3 = collection.find({'Streamname': streamname_id,'RoomID':R3}).sort('_id', -1).limit(40)
     # Transforming the data into the format expected by Chart.js
     hh = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data_R1]
     hh2 = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data_R2]
     hh3 = [([datetime.fromisoformat(data['PhenomenonTime']).strftime("%H:%M") ,data['Result'][0]])for data in Humidity_data_R3]
-    transformed_list = [[item[0] for item in hh], [item[1] for item in hh]]
-    transformed_list2 = [[item[0] for item in hh2], [item[1] for item in hh2]]
-    transformed_list3 = [[item[0] for item in hh3], [item[1] for item in hh3]]
+    transformed_list = [[item[0] for item in hh][::-1], [item[1] for item in hh][::-1]]
+    transformed_list2 = [[item[0] for item in hh2][::-1], [item[1] for item in hh2][::-1]]
+    transformed_list3 = [[item[0] for item in hh3][::-1], [item[1] for item in hh3][::-1]]
 
     # temperatures = [data['Result'] for data in temperature_data]
    

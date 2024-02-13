@@ -42,7 +42,7 @@
         align-items: start; /* This aligns the children at their start, making them top-aligned */
       }
       
-      .temperature-graph, .humidity-graph {
+      .rooom1Graphs .rooom2Graphs .rooom3Graphs {
         flex: 1; /* This allows each graph to take up equal space within the container */
         margin-right: 10px; /* This adds spacing between the two graphs */
       }
