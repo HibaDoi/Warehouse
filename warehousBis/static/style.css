@@ -27,8 +27,13 @@
     #map-container {
         width: 60%; /* Adjusted width to 60% of its parent container */
         position: relative;
+        flex: 1;
+        background-color:lightgray;
+        padding: 20px; 
     }
-    
+    .container {
+      display: flex;
+    }
       
       .fire-detection, .shelf-status {
         margin-bottom: 5px;

@@ -19,7 +19,7 @@ gdfyy= gpd.read_file('https://pydeck2.s3.eu-north-1.amazonaws.com/CENTROIDS.geoj
 # cette fonction fait reference a ce qui doit etre afficher au sein d elle ok 
 def say_hello(request): 
 #la nature de reponce envoyer
-    return render(request ,'me.html')
+    return render(request ,'gg copy.html')
 def get_temperature_data(request):
     # Replace the following with your MongoDB connection details
     client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
@@ -362,8 +362,8 @@ def routing(request):
         gdfyy.at[ID-1, 'status'] = 0
         print("id ocupeeeeeeeeeeeee",ID )
     else: 
-        print("matbadaaaaaal walo a zaft ")    
-    print("333333333333333333333333333333333333333333333333333333333333333333 ") 
+        print("Rien n'est changé ")    
+    print("||||||||||||||||||||||||||||||||| ") 
     #print(gdfyy["status"])
     
     return JsonResponse(closest_shortest_path,safe=False)
@@ -379,5 +379,43 @@ def empty_shelf(request):
        'r1': x,
         'r2': y,
        'r3': z,    
+    }
+    return JsonResponse(data)
+
+def info_mar(request):
+    client = MongoClient('mongodb+srv://hiba99:marwa2020@cluster0.ji3zoyq.mongodb.net/dht11?retryWrites=true&w=majority')
+    db = client['dht11']
+    collection = db['thing_locations']
+    coll_loc=db['locations']
+    coll_thing=db['things']
+    # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
+    last_thing = collection.find().sort('_id', -1).limit(1)
+    # Transforming the data into the format expected by Chart.js
+    obj_location_id = [(data['id_location'] ,data['id_thing'])for data in last_thing]
+
+    obj_location_id=obj_location_id[0]
+
+    obj_location_id,obj_thing_id =obj_location_id[0],obj_location_id[1]
+
+
+    last_thing_loca = coll_loc.find({'Description': str(obj_location_id)})
+
+    # Transforming the data into the format expected by Chart.js
+    obj_location = [data['Location'] for data in last_thing_loca]
+    obj_location =obj_location[0]['coordinates']
+    #########################################
+    # Retrieve the last 4 documents where 'streamname' matches 'streamname_id'
+    obj_thing = coll_thing.find({'_id': ObjectId(obj_thing_id)})
+
+    # Transforming the data into the format expected by Chart.js
+    obj_thingy = [(data['Properties']['room'], data['Name'],data['Description'] ,data['Properties']['expiryDate']) for data in obj_thing]
+    
+
+    data= {
+        # 'labels': ["9AM", "10AM", "11AM", "12PM"],
+       'r1': obj_thingy[0][0],
+        'r2': obj_thingy[0][1],
+       'r3': obj_thingy[0][2],  
+       'r4':  obj_thingy[0][3]
     }
     return JsonResponse(data)

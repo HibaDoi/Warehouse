@@ -1,6 +1,3 @@
-
-
-
 function EMPTY() {
 fetch('/warehouse/empty_shelf/')
     .then(response => response.json())

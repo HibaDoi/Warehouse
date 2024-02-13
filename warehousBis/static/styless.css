@@ -1,0 +1,158 @@
+
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      
+        /* Style pour rendre les cartes côte à côte */
+        .map-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .map-container1 {
+            width: 45%;
+            height: 400px;
+            border: 1px solid #ccc;
+        }
+        .map-container2 {
+          width: 45%;
+          height: 400px;
+          border: 1px solid #ccc;
+      }
+   
+
+      .dashboard {
+        background-color: #333;
+        color: white;
+        padding: 20px;
+        height: calc(100% - 40px);
+      }
+      
+       .fire-detection, .shelf-status {
+        margin-bottom: 20px;
+      }
+      
+      .card {
+        display: flex; /* This enables flexbox for the container, aligning children in a row */
+        justify-content: space-between; /* This spaces the children evenly */
+        align-items: start; /* This aligns the children at their start, making them top-aligned */
+      }
+      
+      .temperature-graph, .humidity-graph {
+        flex: 1; /* This allows each graph to take up equal space within the container */
+        margin-right: 10px; /* This adds spacing between the two graphs */
+      }
+      
+      .humidity-graph {
+        margin-right: 0; /* This ensures there's no extra margin on the right side of the last graph */
+      }
+      
+
+ 
+      
+      .fire-detection, .shelf-status {
+        background-color: #222;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      
+      .warehouse-map {
+        background-color: #222;
+        padding: 10px;
+        border-radius: 5px;
+        min-height: 1000px; /* Adjust as needed */
+      }
+      .warehouse-map2 {
+        background-color: #222;
+        padding: 10px;
+        border-radius: 5px;
+        min-height: 500px; /* Adjust as needed */
+      }
+      .graph-container {
+        display: flex; /* or inline-block */
+    }
+    
+      
+      /* Additional styling can go here */
+
+header {
+  display: flex;
+  align-items: center;
+}
+
+
+
+
+
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.site-header {
+  background-color: #31943d;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+
+
+h1 {
+  color:white; /* A shade of green for a pharmacy theme */
+  font-size: 18px;}
+label {
+    color: #2e852e; /* A shade of green for a pharmacy theme */
+    font-size: 12px;
+    font-weight: bold;
+}
+h4,h2 {
+  color: #093909; /* A shade of green for a pharmacy theme */
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.dashboard-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.main-content, .map-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin: 10px;
+  padding: 20px;
+}
+
+
+
+/* Style for radio buttons */
+.radio-box {
+  margin-bottom: 20px;
+}
+/* Map container specific styles */
+.map-container {
+  width: 40%;
+  height: 600px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .dashboard-container {
+      flex-direction: column;
+  }
+
+  .main-content, .map-container {
+      width: auto
+    }
+  }

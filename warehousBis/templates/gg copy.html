@@ -1,3 +1,4 @@
+{% load static %}
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,95 +7,184 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link href="{% static 'styless.css' %}" rel="stylesheet" type="text/css">
+</head>
 <style>
-    body, html {
-        height: 100%;
-        margin: 0;
-        font-family: Arial, sans-serif;
-      }
-      
-        /* Style pour rendre les cartes côte à côte */
-        .map-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 20px;
-        }
-        .map-container1 {
-            width: 45%;
-            height: 400px;
-            border: 1px solid #ccc;
-        }
-        .map-container2 {
-          width: 45%;
-          height: 400px;
-          border: 1px solid #ccc;
-      }
-   
+  .row {
+    display: flex;
+    justify-content: space-between; /* This will space your divs evenly */
+    margin-bottom: 20px; /* This adds spacing between the rows */
+  }
+  
+  .column {
+    flex: 1; /* This will make each div take up equal space */
+    margin-right: 10px; /* This adds spacing between the divs */
+  }
+  
+  /* Remove margin-right for the last column in each row */
+  .row .column:last-child {
+    margin-right: 0;
+  }
+  
+  
+  /* Optional: remove margin from the last column in each row */
+  .row .column:last-child {
+    margin-right: 0;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    justify-content: space-between; /* Adjust this as needed for spacing */
+  }
 
-      .dashboard {
-        background-color: #333;
-        color: white;
-        padding: 20px;
-        height: calc(100% - 40px);
-      }
-      
-       .fire-detection, .shelf-status {
-        margin-bottom: 20px;
-      }
-      
-      .temperature-graph, .humidity-graph {
-        width: 50%; /* Adjust the width as needed */
-        margin: 0 auto; /* Center the graph */
-        padding: 10px;
-        box-sizing: border-box;
-    }
+  .main-content, .map-container {
+    flex: 1; /* This makes both divs take up equal space, adjust as needed */
+    margin: 10px; /* Adds margin around the content and map containers */
+  }
 
-    .temperature-graph canvas, .humidity-graph canvas {
-        width: 100%;
-        height: 150px; /* Adjust the height as needed */
-    }
-      
-      .fire-detection, .shelf-status {
-        background-color: #222;
-        padding: 10px;
-        border-radius: 5px;
-      }
-      
-      .warehouse-map {
-        background-color: #222;
-        padding: 10px;
-        border-radius: 5px;
-        min-height: 1000px; /* Adjust as needed */
-      }
-      .warehouse-map2 {
-        background-color: #222;
-        padding: 10px;
-        border-radius: 5px;
-        min-height: 500px; /* Adjust as needed */
-      }
-      .graph-container {
-        display: flex; /* or inline-block */
+  .graph-container {
+    margin-bottom: 20px; /* Adds some space between your graph containers */
+  }
+
+  /* Optional: Adjust widths if you want one side to be larger than the other */
+  .main-content {
+    width: 60%; /* Adjust this value as needed */
+  }
+
+  .map-container {
+    width: 40%; /* Adjust this value as needed */
+    height: 600px; /* Set a height for the map container */
+  }
+
+  /* Ensures that the map and content are vertically aligned at the top */
+  .main-content, .map-container {
+    align-items: flex-start;}
+
+    .radio-box {
+      display: flex;
+      justify-content: center; /* Horizontally center the content */
+      flex-wrap: wrap; /* Allows items to wrap onto the next line if needed */
     }
     
-      
-      /* Additional styling can go here */
-       
+    .radio-box > div {
+      margin: 5px; /* Optional: Adds some space around each radio button and label */
+    }
+    
+  
 </style>
 </head>
+<header class="site-header">
+  <h1>Pharmaceutical Warehouse</h1>
+</header>
 <body>
+<div class="dashboard-container">
+  <div class="main-content">
+    <div class="header">
+      <div class="radio-box">
+        <div>
+          <input type="radio" id="room1" name="roomSelect" value="room1">
+          <label for="room1">Room 1</label>
+        </div>
+      
+        <div>
+          <input type="radio" id="room2" name="roomSelect" value="room2">
+          <label for="room2">Room 2</label>
+        </div>
+      
+        <div>
+          <input type="radio" id="room3" name="roomSelect" value="room3">
+          <label for="room3">Room 3</label>
+        </div>
+      </div>
+      
+    </div>
+<div>
+  <h4>Disponible Shelf</h4><br>
+  <div class="row">
+    <div class="column">
+      <label>Room 1</label>
+      <div class="content" id="room1Text"></div>
+    </div>
+    <div class="column">
+      <label>Room 2</label>
+      <div class="content" id="room2Text"></div>
+    </div>
+    <div class="column">
+      <label>Room 3</label>
+      <div class="content" id="room3Text"></div>
+    </div>
+  </div>
+  
+  <h4>Information about Medicament In route</h4><br>
+  <div class="row">
+    <div class="column">
+      <label for="o">Room</label>
+      <div class="content" id="o"></div>
+    </div>
+    <div class="column">
+      <label for="oo">Name</label>
+      <div class="content" id="oo"></div>
+    </div>
+    <div class="column">
+      <label for="ooo">Expiration Date</label>
+      <div class="content" id="ooo"></div>
+    </div>
+    <div class="column">
+      <label for="oooo">Description</label>
+      <div class="content" id="oooo"></div>
+    </div>
+  </div>
+  
+</div>
+    <!-- Graph containers for each room temperature+humidity-->
+    <div class="card" id="rooom1Graphs">
+
+      <div class="temperature-graph">
+        <h2>Temperature Graph</h2>
+        <canvas id="temperatureGraph"></canvas>
+      </div>
+      
+      <div class="humidity-graph">
+        <h2>Humidity Graph</h2>
+        <canvas id="humidityGraph"></canvas>
+      </div>
+    </div>
+
+    <div class="card" id="rooom2Graphs" style="display: none;">
+      <div class="temperature-graph">
+        <h2>Temperature Graph</h2>
+        <canvas id="temperatureGraph2"></canvas>
+      </div>
+      <div class="humidity-graph">
+        <h2>Humidity Graph</h2>
+        <canvas id="humidityGraph2"></canvas>
+      </div>
+    </div>
+     
+    <div class="card" id="rooom3Graphs" style="display: none;">
+      <div class="temperature-graph">
+        <h2>Temperature Graph</h2>
+        <canvas id="temperatureGraph3"></canvas>
+      </div>
+      <div class="humidity-graph">
+        <h2>Humidity Graph</h2>
+        <canvas id="humidityGraph3"></canvas>
+      </div>
+    </div>
+  </div>
+
   
 
-<div class="map-container">
-  <div id="map1" class="map-container1">
+
+  <div class="map-container card" id="map">
     <script>
       // Initialize the map
-      var mymap = L.map('map1').setView([34.044414357320676, -6.787781743978746], 48);
+        var mymap = L.map('map').setView([34.044414357320676, -6.787781743978746], 48);
   
       // Add a tile layer to the map
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(mymap);
+        }).addTo(mymap);
   ///////////////
    ///////////////
    fetch('/warehouse/get_infra/')
@@ -203,12 +293,48 @@
     routing();    
       
   </script>
-  
   </div>
-  
-
- 
 </div>
+<script>
 
+  function EMPTY() {
+  fetch('/warehouse/empty_shelf/')
+      .then(response => response.json())
+      .then(data => {
+        // Assuming 'data' is an object with properties 'r1', 'r2', and 'r3'
+        // representing the number of empty shelves in each room.
+        
+        // Update the text content of elements with IDs 'room1Text', 'room2Text', and 'room3Text'
+        // You'll need to add these elements to your HTML.
+        document.getElementById('room1Text').textContent = ` ${data.r1} empty shelves`;
+        document.getElementById('room2Text').textContent = ` ${data.r2} empty shelves`;
+        document.getElementById('room3Text').textContent = ` ${data.r3} empty shelves`;
+      })
+      .catch(error => console.error('Error:', error));
+  
+  fetch('/warehouse/info_mar/')
+      .then(response => response.json())
+      .then(data => {
+        // Assuming 'data' is an object with properties 'r1', 'r2', and 'r3'
+        // representing the number of empty shelves in each room.
+        
+        // Update the text content of elements with IDs 'room1Text', 'room2Text', and 'room3Text'
+        // You'll need to add these elements to your HTML.
+        document.getElementById('o').textContent = ` ${data.r1} `;
+        document.getElementById('oo').textContent = ` ${data.r2} `;
+        document.getElementById('ooo').textContent = ` ${data.r4}  `;
+        document.getElementById('oooo').textContent = ` ${data.r3}  `;
+
+      })
+      .catch(error => console.error('Error:', error));
+    }
+  EMPTY()
+  setInterval(EMPTY, 2000);
+</script>
+  <script src="{% static 'room1.js' %}"></script>  
+  <script src="{% static 'room.js' %}"></script>  
+  <script src="{% static 'shelf_chart.js' %}"></script>  
+  <script src="{% static 'temp_humd.js' %}"></script>
+  
 </body>
 </html>
